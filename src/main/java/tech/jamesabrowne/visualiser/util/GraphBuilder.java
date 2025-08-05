@@ -1,14 +1,11 @@
 package tech.jamesabrowne.visualiser.util;
 
-import tech.jamesabrowne.visualiser.model.Edge;
 import tech.jamesabrowne.visualiser.model.Graph;
 import tech.jamesabrowne.visualiser.model.Node;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import static java.lang.Math.min;
 
 public class GraphBuilder {
 

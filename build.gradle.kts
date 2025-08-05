@@ -27,5 +27,5 @@ javafx {
 }
 
 application {
-    mainClass.set("tech.jamesabrowne.visualiser.MainApp")
+    mainClass.set("tech.jamesabrowne.visualiser.Main")
 }
