@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.QuadCurve;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -38,31 +39,25 @@ public class GraphVisualiser extends Application {
         Algorithm algorithm = AlgorithmFactory.getAlgorithm(algorithmName);
         Random random = new Random();
 
-        boolean valid;
-        double x, y;
+        int nodeCount = graph.getAllNodes().size();
+        int columns = (int) Math.ceil(Math.sqrt(nodeCount)); // Square layout
+        int rows = (int) Math.ceil((double) nodeCount / columns);
+
+        double cellWidth = WIDTH / columns;
+        double cellHeight = HEIGHT / rows;
+
+        int index = 0;
+
 
         // Issue with this loop is if the canvas size is too small it will cause an infinite loop
         // Draw nodes
         for (Node node : graph.getAllNodes()) {
-            do {
-                valid = true;
-                x = NODE_RADIUS + random.nextDouble() * (WIDTH - 5 * NODE_RADIUS) * SPARSENESS +
-                        (1 - SPARSENESS) * (WIDTH / 2 - NODE_RADIUS);
+            int col = index % columns;
+            int row = index / columns;
 
-                y = NODE_RADIUS + random.nextDouble() * (HEIGHT - 5 * NODE_RADIUS) * SPARSENESS +
-                        (1 - SPARSENESS) * (HEIGHT / 2 - NODE_RADIUS);
-
-                for (Double[] pos : nodePositions.values()) {
-                    double dx = x - pos[0];
-                    double dy = y - pos[1];
-                    double distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 2 * NODE_RADIUS + 10) {
-                        valid = false;
-                        break;
-                    }
-                }
-            } while (!valid);
+            // Center the node within its grid cell
+            double x = (col + 0.5) * cellWidth;
+            double y = (row + 0.5) * cellHeight;
 
             nodePositions.put(node.getId(), new Double[]{x, y});
             Circle circle = new Circle(x, y, NODE_RADIUS);
@@ -77,6 +72,7 @@ public class GraphVisualiser extends Application {
             label.setLayoutY(y - NODE_RADIUS / 2);
 
             root.getChildren().addAll(circle, label);
+            index++;
         }
 
         // Draw edges
@@ -97,9 +93,18 @@ public class GraphVisualiser extends Application {
                 double endX = toPos[0] - unitX * NODE_RADIUS;
                 double endY = toPos[1] - unitY * NODE_RADIUS;
 
-                Line line = new Line(startX, startY, endX, endY);
-                line.setStroke(Color.BLACK);
-                line.setStrokeWidth(1.5);
+                double curveOffset = 60; // adjust as needed
+
+                QuadCurve curve = new QuadCurve();
+                curve.setStartX(startX);
+                curve.setStartY(startY);
+                curve.setEndX(endX);
+                curve.setEndY(endY);
+                curve.setControlX((startX + endX) / 2 - unitY * curveOffset);
+                curve.setControlY((startY + endY) / 2 + unitX * curveOffset);
+                curve.setStroke(Color.BLACK);
+                curve.setStrokeWidth(1.5);
+                curve.setFill(null);
 
                 double angle = Math.atan2(dy, dx);
                 double arrowLength = 10;
@@ -107,10 +112,8 @@ public class GraphVisualiser extends Application {
 
                 double x1 = endX;
                 double y1 = endY;
-
                 double x2 = endX - arrowLength * Math.cos(angle - arrowAngle);
                 double y2 = endY - arrowLength * Math.sin(angle - arrowAngle);
-
                 double x3 = endX - arrowLength * Math.cos(angle + arrowAngle);
                 double y3 = endY - arrowLength * Math.sin(angle + arrowAngle);
 
@@ -123,12 +126,9 @@ public class GraphVisualiser extends Application {
                 weightLabel.setLayoutX((startX + endX) / 2);
                 weightLabel.setLayoutY((startY + endY) / 2);
 
-                root.getChildren().addAll(line, arrowHead, weightLabel);
+                root.getChildren().addAll(curve, arrowHead, weightLabel);
             }
         }
-
-
-
 
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
