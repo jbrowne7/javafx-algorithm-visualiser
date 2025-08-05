@@ -9,6 +9,7 @@ import tech.jamesabrowne.visualiser.model.Edge;
 import tech.jamesabrowne.visualiser.model.Graph;
 import tech.jamesabrowne.visualiser.model.Node;
 import tech.jamesabrowne.visualiser.util.AlgorithmFactory;
+import tech.jamesabrowne.visualiser.util.GraphBuilder;
 
 public class MainApp extends Application {
 
@@ -31,19 +32,8 @@ public class MainApp extends Application {
             return;
         }
 
-//        Test to check graph, edge, and node representation works
-        Graph graph = new Graph();
-        graph.addNode("A");
-        graph.addNode("B");
-        graph.addNode("C");
-        graph.addNode("D");
-        graph.addEdge("A", "B", 13);
-        graph.addEdge("A", "C", 13);
-        graph.addEdge("D", "B", 13);
-        graph.addEdge("B", "C", 13);
-        graph.addEdge("B", "A", 13);
-        graph.addEdge("B", "D", 13);
-
+//      Testing graph builder
+        Graph graph = GraphBuilder.build();
         String output;
 
         for (Node node : graph.getAllNodes()) {

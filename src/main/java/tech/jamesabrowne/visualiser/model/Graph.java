@@ -26,4 +26,19 @@ public class Graph {
     public Collection<Node> getAllNodes() {
         return nodes.values();
     }
+
+    public boolean hasEdge(String fromId, String toId) {
+
+        Node from = nodes.get(fromId);
+
+        for (Edge edge : from.getEdgeList()) {
+            if (edge.getTo().getId().equals(toId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
 }
