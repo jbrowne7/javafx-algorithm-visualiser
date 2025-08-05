@@ -1,1 +1,1 @@
-rootProject.name = "java-3d-render-engine"
+rootProject.name = "javafx-algorithm-visualiser"
