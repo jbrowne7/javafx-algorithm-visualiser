@@ -92,6 +92,8 @@ public class GraphBuilder {
                 graph.addEdge("N3", "N6", random.nextInt(100));
                 graph.addEdge("N6", "N7", random.nextInt(100));
                 graph.addEdge("N6", "N8", random.nextInt(100));
+                graph.addEdge("N4", "N3", random.nextInt(100));
+                graph.addEdge("N5", "N4", random.nextInt(100));
         }
 //        graph.addEdge("");
 

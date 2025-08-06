@@ -3,6 +3,7 @@ package tech.jamesabrowne.visualiser.ui;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -13,6 +14,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;
+import tech.jamesabrowne.visualiser.controller.Controller;
 import tech.jamesabrowne.visualiser.model.Edge;
 import tech.jamesabrowne.visualiser.model.Graph;
 import tech.jamesabrowne.visualiser.model.Node;
@@ -21,30 +23,42 @@ import tech.jamesabrowne.visualiser.util.GraphBuilder;
 
 import java.util.*;
 
+/**
+ * This class is used to handle UI for graphs
+ */
+
 public class GraphVisualiser extends Application {
+
+
+
     private static final int WIDTH = 1300;
     private static final int HEIGHT = 900;
     private static final int NODE_RADIUS = 17;
-    private static final double SPARSENESS = 0.4;
 
     private final Map<String, Double[]> nodePositions = new HashMap<>();
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         Parameters params = getParameters();
         Graph graph = GraphBuilder.presetBuild(1);
         Group root = new Group();
         String algorithmName = params.getRaw().getFirst();
         Algorithm algorithm = AlgorithmFactory.getAlgorithm(algorithmName);
-        Random random = new Random();
+
+        Controller controller = new Controller(algorithm);
+        Button stepButton = new Button("Step");
+        stepButton.setLayoutX(20);
+        stepButton.setLayoutY(20);
+        stepButton.setOnAction(e -> controller.step());
+        root.getChildren().add(stepButton);
 
         int nodeCount = graph.getAllNodes().size();
         int columns = (int) Math.ceil(Math.sqrt(nodeCount));
         int rows = (int) Math.ceil((double) nodeCount / columns);
 
-        double cellWidth = WIDTH / columns;
-        double cellHeight = HEIGHT / rows;
+        double cellWidth = WIDTH / (columns * 1.5);
+        double cellHeight = HEIGHT / (rows * 1.5);
 
         int index = 0;
 
@@ -68,8 +82,10 @@ public class GraphVisualiser extends Application {
 
             Label label = new Label(node.getId());
             label.setFont(Font.font("System", FontWeight.BLACK, 10));
-            label.setLayoutX(x - NODE_RADIUS / 2);
-            label.setLayoutY(y - NODE_RADIUS / 2);
+
+            // just added double type cast here to get rid of intellij warning
+            label.setLayoutX(x - (double) NODE_RADIUS / 2);
+            label.setLayoutY(y - (double) NODE_RADIUS / 2);
 
             root.getChildren().addAll(circle, label);
             index++;
