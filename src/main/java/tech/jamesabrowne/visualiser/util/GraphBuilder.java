@@ -15,7 +15,7 @@ public class GraphBuilder {
     private static final int MAX_WEIGHT = 100;
     private static final int MIN_WEIGHT = 0;
 
-    public static Graph build() {
+    public static Graph randomBuild() {
 
         /***
          Build method constraints:
@@ -67,4 +67,35 @@ public class GraphBuilder {
 
         return graph;
     }
+
+    public static Graph presetBuild(int presetId) {
+
+        Graph graph = new Graph();
+
+        graph.addNode("N1");
+        graph.addNode("N2");
+        graph.addNode("N3");
+        graph.addNode("N4");
+        graph.addNode("N5");
+        graph.addNode("N6");
+        graph.addNode("N7");
+        graph.addNode("N8");
+
+        Random random = new Random();
+
+        switch (presetId) {
+            case 1:
+                graph.addEdge("N1", "N2", random.nextInt(100));
+                graph.addEdge("N2", "N3", random.nextInt(100));
+                graph.addEdge("N3", "N4", random.nextInt(100));
+                graph.addEdge("N4", "N5", random.nextInt(100));
+                graph.addEdge("N3", "N6", random.nextInt(100));
+                graph.addEdge("N6", "N7", random.nextInt(100));
+                graph.addEdge("N6", "N8", random.nextInt(100));
+        }
+//        graph.addEdge("");
+
+        return graph;
+    }
+
 }

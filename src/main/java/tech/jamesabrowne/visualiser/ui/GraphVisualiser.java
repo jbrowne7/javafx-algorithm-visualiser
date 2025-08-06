@@ -8,9 +8,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.QuadCurve;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;
 import tech.jamesabrowne.visualiser.model.Edge;
@@ -33,14 +33,14 @@ public class GraphVisualiser extends Application {
     public void start(Stage stage) throws Exception {
 
         Parameters params = getParameters();
-        Graph graph = GraphBuilder.build();
+        Graph graph = GraphBuilder.presetBuild(1);
         Group root = new Group();
         String algorithmName = params.getRaw().getFirst();
         Algorithm algorithm = AlgorithmFactory.getAlgorithm(algorithmName);
         Random random = new Random();
 
         int nodeCount = graph.getAllNodes().size();
-        int columns = (int) Math.ceil(Math.sqrt(nodeCount)); // Square layout
+        int columns = (int) Math.ceil(Math.sqrt(nodeCount));
         int rows = (int) Math.ceil((double) nodeCount / columns);
 
         double cellWidth = WIDTH / columns;
@@ -75,58 +75,96 @@ public class GraphVisualiser extends Application {
             index++;
         }
 
-        // Draw edges
         for (Node node : graph.getAllNodes()) {
             for (Edge edge : node.getEdgeList()) {
+
+                /*
+                    Drawing edge lines, how this works:
+                        - Have two nodes represented as circles with radius `r` positioned at x1,y1 and x2,y2
+                        - We get the direction from node1 to node2 by (dx,dy) = (x2-x1, y2-y1)
+                        - We normalise direction vector to unit vector by (dx/distance, dy/distance)
+                        - We can now subtract the direction unit vector * r to get the edge of the circle
+                 */
+
                 Double[] fromPos = nodePositions.get(edge.getFrom().getId());
                 Double[] toPos = nodePositions.get(edge.getTo().getId());
 
+                // direction vector (dx, dy)
                 double dx = toPos[0] - fromPos[0];
                 double dy = toPos[1] - fromPos[1];
+
                 double distance = Math.sqrt(dx * dx + dy * dy);
 
+                // direction unit vector (unitX, unitY)
                 double unitX = dx / distance;
                 double unitY = dy / distance;
 
+                // calculate where to draw edge
                 double startX = fromPos[0] + unitX * NODE_RADIUS;
                 double startY = fromPos[1] + unitY * NODE_RADIUS;
                 double endX = toPos[0] - unitX * NODE_RADIUS;
                 double endY = toPos[1] - unitY * NODE_RADIUS;
 
-                double curveOffset = 60; // adjust as needed
+                Line line = new Line(startX, startY, endX, endY);
+                root.getChildren().add(line);
 
-                QuadCurve curve = new QuadCurve();
-                curve.setStartX(startX);
-                curve.setStartY(startY);
-                curve.setEndX(endX);
-                curve.setEndY(endY);
-                curve.setControlX((startX + endX) / 2 - unitY * curveOffset);
-                curve.setControlY((startY + endY) / 2 + unitX * curveOffset);
-                curve.setStroke(Color.BLACK);
-                curve.setStrokeWidth(1.5);
-                curve.setFill(null);
+                /*
+                    Drawing edge arrow heads, how this works:
+                        - We want a small isosceles triangle at the end of toId node to represent direction of edge
+                        - Set angle of triangle `arrowAngle`
+                        - Set length of side of triangle `arrowLength`
+                        - Using atan2(dx, dy) we get the angle of the line compared to the x-axis
+                        - Calculate the 2 points of the isosceles triangle which we need (3rd point is the tip) by:
+                            - Move backward from the tip by `arrowLength`
+                            - We aren't moving straight back but outwards
+                            - `angle +- arrowAngle` is the angle to move out from the line (since angle is the
+                            direction of the line and arrowAngle is the width of the arrowHead)
+                            - cos gives us the horizontal component and sin gives us the vertical component
 
+                 */
+
+                // arrowhead size and angle
+                double arrowLength = 15;
+                double arrowAngle = Math.toRadians(30);
+
+                // arrowhead points
                 double angle = Math.atan2(dy, dx);
-                double arrowLength = 10;
-                double arrowAngle = Math.toRadians(15);
 
-                double x1 = endX;
-                double y1 = endY;
-                double x2 = endX - arrowLength * Math.cos(angle - arrowAngle);
-                double y2 = endY - arrowLength * Math.sin(angle - arrowAngle);
-                double x3 = endX - arrowLength * Math.cos(angle + arrowAngle);
-                double y3 = endY - arrowLength * Math.sin(angle + arrowAngle);
+                // other 2 points of triangle for the arrow head, 3rd point is the tip of the line
+                double xArrow1 = endX - arrowLength * Math.cos(angle - arrowAngle);
+                double yArrow1 = endY - arrowLength * Math.sin(angle - arrowAngle);
 
-                Polygon arrowHead = new Polygon(x1, y1, x2, y2, x3, y3);
+                double xArrow2 = endX - arrowLength * Math.cos(angle + arrowAngle);
+                double yArrow2 = endY - arrowLength * Math.sin(angle + arrowAngle);
+
+                Polygon arrowHead = new Polygon();
+                arrowHead.getPoints().addAll(endX, endY, xArrow1, yArrow1, xArrow2, yArrow2);
                 arrowHead.setFill(Color.BLACK);
 
-                Label weightLabel = new Label(String.valueOf(edge.getWeight()));
-                weightLabel.setFont(Font.font("System", FontWeight.BOLD, 10));
-                weightLabel.setTextFill(Color.BLACK);
-                weightLabel.setLayoutX((startX + endX) / 2);
-                weightLabel.setLayoutY((startY + endY) / 2);
+                root.getChildren().add(arrowHead);
 
-                root.getChildren().addAll(curve, arrowHead, weightLabel);
+                /*
+                    Adding weight labels to lines, how this works:
+                        - Calculate mid-point of the line
+                        - Calculate (x, y) position for label using mid-point moved by (unit direction vector * offset)
+                 */
+
+                // calculate mid point
+                double midX = (startX + endX) / 2;
+                double midY = (startY + endY) / 2;
+
+                // offset distance for weight label
+                double offset = 20;
+
+                // calculate (x, y) pos for label
+                double labelX = midX - unitY * offset;
+                double labelY = midY + unitX * offset;
+
+                Text weightLabel = new Text(labelX, labelY, String.valueOf(edge.getWeight()));
+                weightLabel.setFill(Color.BLUE);
+                weightLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+                root.getChildren().add(weightLabel);
+
             }
         }
 
