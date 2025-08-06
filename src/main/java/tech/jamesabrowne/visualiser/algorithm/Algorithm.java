@@ -1,6 +1,8 @@
 package tech.jamesabrowne.visualiser.algorithm;
 
+import tech.jamesabrowne.visualiser.model.StepResult;
+
 public abstract class Algorithm {
 
-    public abstract void step();
+    public abstract StepResult step();
 }
