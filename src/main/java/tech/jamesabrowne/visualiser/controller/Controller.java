@@ -1,6 +1,7 @@
 package tech.jamesabrowne.visualiser.controller;
 
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;
+import tech.jamesabrowne.visualiser.model.StepResult;
 
 public class Controller {
     private final Algorithm algorithm;
@@ -9,7 +10,7 @@ public class Controller {
         this.algorithm = algorithm;
     }
 
-    public void step() {
-        algorithm.step();
+    public StepResult step() {
+        return algorithm.step();
     }
 }

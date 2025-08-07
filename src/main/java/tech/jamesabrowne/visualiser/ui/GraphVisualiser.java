@@ -18,6 +18,7 @@ import tech.jamesabrowne.visualiser.controller.Controller;
 import tech.jamesabrowne.visualiser.model.Edge;
 import tech.jamesabrowne.visualiser.model.Graph;
 import tech.jamesabrowne.visualiser.model.Node;
+import tech.jamesabrowne.visualiser.model.StepResult;
 import tech.jamesabrowne.visualiser.util.AlgorithmFactory;
 import tech.jamesabrowne.visualiser.util.GraphBuilder;
 
@@ -26,45 +27,41 @@ import java.util.*;
 /**
  * This class is used to handle UI for graphs
  */
-
 public class GraphVisualiser extends Application {
-
-
-
     private static final int WIDTH = 1300;
     private static final int HEIGHT = 900;
     private static final int NODE_RADIUS = 17;
 
     private final Map<String, Double[]> nodePositions = new HashMap<>();
+    private final Map<String, Circle> nodeCircles = new HashMap<>();
+    private final Map<String, Map<String, Line>> edgeLines = new HashMap<>();
+    private final Map<String, Map<String, Polygon>> edgeArrowHeads = new HashMap<>();
+
+    private Circle lastHighlightedNode = null;
+    private Line lastHighlightedEdge = null;
+    private Polygon lastHighlightedArrowHead = null;
+
 
     @Override
     public void start(Stage stage) {
-
         Parameters params = getParameters();
         Graph graph = GraphBuilder.presetBuild(1);
         Group root = new Group();
         String algorithmName = params.getRaw().getFirst();
-        Algorithm algorithm = AlgorithmFactory.getAlgorithm(algorithmName);
-
+        Algorithm algorithm = AlgorithmFactory.getAlgorithm(algorithmName, graph, "N2");
         Controller controller = new Controller(algorithm);
-        Button stepButton = new Button("Step");
-        stepButton.setLayoutX(20);
-        stepButton.setLayoutY(20);
-        stepButton.setOnAction(e -> controller.step());
-        root.getChildren().add(stepButton);
 
         int nodeCount = graph.getAllNodes().size();
         int columns = (int) Math.ceil(Math.sqrt(nodeCount));
         int rows = (int) Math.ceil((double) nodeCount / columns);
+        int index = 0;
 
         double cellWidth = WIDTH / (columns * 1.5);
         double cellHeight = HEIGHT / (rows * 1.5);
 
-        int index = 0;
-
-
-        // Issue with this loop is if the canvas size is too small it will cause an infinite loop
-        // Draw nodes
+        /*
+            Drawing nodes, places node in a grid based on the size of the scene
+         */
         for (Node node : graph.getAllNodes()) {
             int col = index % columns;
             int row = index / columns;
@@ -86,7 +83,7 @@ public class GraphVisualiser extends Application {
             // just added double type cast here to get rid of intellij warning
             label.setLayoutX(x - (double) NODE_RADIUS / 2);
             label.setLayoutY(y - (double) NODE_RADIUS / 2);
-
+            nodeCircles.put(node.getId(), circle);
             root.getChildren().addAll(circle, label);
             index++;
         }
@@ -122,6 +119,8 @@ public class GraphVisualiser extends Application {
                 double endY = toPos[1] - unitY * NODE_RADIUS;
 
                 Line line = new Line(startX, startY, endX, endY);
+                edgeLines.putIfAbsent(edge.getFrom().getId(), new HashMap<>());
+                edgeLines.get(edge.getFrom().getId()).put(edge.getTo().getId(), line);
                 root.getChildren().add(line);
 
                 /*
@@ -157,6 +156,9 @@ public class GraphVisualiser extends Application {
                 arrowHead.getPoints().addAll(endX, endY, xArrow1, yArrow1, xArrow2, yArrow2);
                 arrowHead.setFill(Color.BLACK);
 
+                edgeArrowHeads.putIfAbsent(edge.getFrom().getId(), new HashMap<>());
+                edgeArrowHeads.get(edge.getFrom().getId()).put(edge.getTo().getId(), arrowHead);
+
                 root.getChildren().add(arrowHead);
 
                 /*
@@ -180,9 +182,47 @@ public class GraphVisualiser extends Application {
                 weightLabel.setFill(Color.BLUE);
                 weightLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
                 root.getChildren().add(weightLabel);
-
             }
         }
+
+        Button stepButton = new Button("Step");
+        stepButton.setLayoutX(20);
+        stepButton.setLayoutY(20);
+        stepButton.setOnAction(e -> {
+            StepResult result = controller.step();
+            if (result == null) {
+                System.out.println("finished");
+                return;
+            }
+
+            if (lastHighlightedNode != null) lastHighlightedNode.setFill(Color.WHITE);
+            if (lastHighlightedEdge != null) lastHighlightedEdge.setStroke(Color.BLACK);
+            if (lastHighlightedArrowHead != null) lastHighlightedArrowHead.setFill(Color.BLACK);
+
+            Circle currentCircle = nodeCircles.get(result.getCurrentNodeId());
+            if (currentCircle != null) {
+                currentCircle.setFill(Color.YELLOW);
+                lastHighlightedNode = currentCircle;
+            }
+
+            String[] currentEdge = {result.getCurrentEdge().getFrom().getId(), result.getCurrentEdge().getTo().getId()};
+            Line edgeLine = edgeLines.getOrDefault(currentEdge[0], Map.of()).get(currentEdge[1]);
+            if (edgeLine != null) {
+                edgeLine.setStroke(Color.RED);
+                edgeLine.toFront();
+                lastHighlightedEdge = edgeLine;
+            }
+
+            Polygon arrowHead = edgeArrowHeads.getOrDefault(currentEdge[0], Map.of()).get(currentEdge[1]);
+            if (arrowHead != null) {
+                arrowHead.setFill(Color.RED);
+                arrowHead.toFront();
+                lastHighlightedArrowHead = arrowHead;
+            }
+
+            System.out.println(result.getCurrentNodeId());
+        });
+        root.getChildren().add(stepButton);
 
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);

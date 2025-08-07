@@ -6,19 +6,19 @@ import java.util.List;
  * This model is used to represent the results of each step an algorithm takes
  */
 public class StepResult {
-    private List<String> visitedNodeIds;
-    private List<Edge> updatedEdges;
+    private String currentNodeId;
+    private Edge currentEdge;
 
-    public StepResult(List<String> visitedNodeIds, List<Edge> updatedEdges) {
-        this.visitedNodeIds = visitedNodeIds;
-        this.updatedEdges = updatedEdges;
+    public StepResult(String currentNodeId, Edge currentEdge) {
+        this.currentNodeId = currentNodeId;
+        this.currentEdge = currentEdge;
     }
 
-    public List<String> getVisitedNodeIds() {
-        return visitedNodeIds;
+    public String getCurrentNodeId() {
+        return currentNodeId;
     }
 
-    public List<Edge> getUpdatedEdges() {
-        return updatedEdges;
+    public Edge getCurrentEdge() {
+        return currentEdge;
     }
 }
