@@ -3,18 +3,15 @@ package tech.jamesabrowne.visualiser.model;
 import javafx.beans.property.*;
 
 public class AlgorithmTableRow {
-    private final StringProperty nodeId;
-    private final IntegerProperty distance;
+    private final String nodeId;
+    private int distance;
 
     public AlgorithmTableRow(String nodeId, int distance) {
-        this.nodeId = new SimpleStringProperty(nodeId);
-        this.distance = new SimpleIntegerProperty(distance);}
+        this.nodeId = nodeId;
+        this.distance = distance;
+    }
 
-    public String getNodeId() { return nodeId.get(); }
-    public int getDistance() { return distance.get(); }
-
-    public void setDistance(int distance) { this.distance.set(distance); }
-
-    public StringProperty nodeIdProperty() { return nodeId; }
-    public IntegerProperty distanceProperty() { return distance; }
+    public String getNodeId() { return nodeId; }
+    public int getDistance() { return distance; }
+    public void setDistance(int distance) { this.distance = distance; }
 }

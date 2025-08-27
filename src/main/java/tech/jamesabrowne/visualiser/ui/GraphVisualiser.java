@@ -192,7 +192,6 @@ public class GraphVisualiser extends Application {
 
         TableView<AlgorithmTableRow> tableView = new TableView<>();
         tableView.setLayoutX(WIDTH - 250);
-        tableView.setLayoutY(20);
 
         TableColumn<AlgorithmTableRow, String> nodeCol = new TableColumn<>("Node");
         nodeCol.setCellValueFactory(
@@ -251,7 +250,7 @@ public class GraphVisualiser extends Application {
                 lastHighlightedArrowHead = arrowHead;
             }
 
-//            updateTable(algorithm, tableView);
+            updateTable(algorithm, tableView);
 
             System.out.println(result.getCurrentNodeId());
         });
@@ -263,12 +262,12 @@ public class GraphVisualiser extends Application {
         stage.show();
     }
 
-    private void updateTable(Algorithm algorithm, TableView<NodeEntry> table) {
-        List<NodeEntry> entries = new ArrayList<>();
+    private void updateTable(Algorithm algorithm, TableView<AlgorithmTableRow> table) {
+        List<AlgorithmTableRow> entries = new ArrayList<>();
         for (Node node : algorithm.getGraph().getAllNodes()) {
             String nodeId = node.getId();
             int distance = algorithm.getDistance(nodeId);
-            entries.add(new NodeEntry(nodeId, distance));
+            entries.add(new AlgorithmTableRow(nodeId, distance));
         }
         table.getItems().setAll(entries);
     }
