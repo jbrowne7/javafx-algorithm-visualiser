@@ -35,6 +35,11 @@ public class Dijkstra extends Algorithm {
     }
 
     @Override
+    public void initialise() {
+
+    }
+
+    @Override
     public StepResult step() {
         while ((edgeIterator == null || !edgeIterator.hasNext()) && !queue.isEmpty()) {
             NodeEntry current = queue.poll();
