@@ -1,7 +1,5 @@
 package tech.jamesabrowne.visualiser.model;
 
-import java.util.List;
-
 /**
  * This model is used to represent the results of each step an algorithm takes
  */

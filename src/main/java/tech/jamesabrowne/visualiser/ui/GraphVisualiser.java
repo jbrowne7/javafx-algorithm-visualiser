@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -21,7 +20,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;
-import tech.jamesabrowne.visualiser.algorithm.Dijkstra;
 import tech.jamesabrowne.visualiser.model.*;
 import tech.jamesabrowne.visualiser.util.AlgorithmFactory;
 import tech.jamesabrowne.visualiser.util.GraphBuilder;
@@ -92,16 +90,17 @@ public class GraphVisualiser extends Application {
             index++;
         }
 
+
+        /*
+            Drawing edges, how this works:
+                - For each edge we get the position of the from and to nodes
+                - We calculate the direction vector from the from node to the to node
+                - We normalise the direction vector to a unit vector
+                - We then calculate the start and end positions of the line by moving along the direction
+                vector by the radius of the node circle
+         */
         for (Node node : graph.getAllNodes()) {
             for (Edge edge : node.getEdgeList()) {
-
-                /*
-                    Drawing edge lines, how this works:
-                        - Have two nodes represented as circles with radius `r` positioned at x1,y1 and x2,y2
-                        - We get the direction from node1 to node2 by (dx,dy) = (x2-x1, y2-y1)
-                        - We normalise direction vector to unit vector by (dx/distance, dy/distance)
-                        - We can now subtract the direction unit vector * r to get the edge of the circle
-                 */
 
                 Double[] fromPos = nodePositions.get(edge.getFrom().getId());
                 Double[] toPos = nodePositions.get(edge.getTo().getId());
@@ -190,6 +189,10 @@ public class GraphVisualiser extends Application {
         }
 
 
+        /*
+            Adding table to show current distances from source node
+         */
+
         TableView<AlgorithmTableRow> tableView = new TableView<>();
         tableView.setLayoutX(WIDTH - 250);
 
@@ -215,6 +218,9 @@ public class GraphVisualiser extends Application {
         root.getChildren().add(tableView);
 
 
+        /*
+            Adding step button to call step function of the algorithm and update table and graph highlighting
+         */
         Button stepButton = new Button("Step");
         stepButton.setLayoutX(20);
         stepButton.setLayoutY(20);

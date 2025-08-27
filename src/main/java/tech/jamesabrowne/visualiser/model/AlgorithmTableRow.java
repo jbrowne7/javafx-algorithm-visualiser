@@ -1,7 +1,5 @@
 package tech.jamesabrowne.visualiser.model;
 
-import javafx.beans.property.*;
-
 public class AlgorithmTableRow {
     private final String nodeId;
     private int distance;

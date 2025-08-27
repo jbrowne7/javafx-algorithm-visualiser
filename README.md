@@ -1,3 +1,18 @@
+# Requirements
+- Java 23
+- Git
+
+# Run locally using gradle
+**1. Clone the repository**
+```bash
+git clone git@github.com:jbrowne7/javafx-algorithm-visualiser.git
+cd javafx-algorithm-visualiser
+```
+**2. Run using gradle wrapper**
+```bash
+./gradlew run --args dijkstra
+```
+
 
 ## `algorithm` package
 
@@ -26,3 +41,4 @@ This package contains utility classes and methods used throughout the project. C
 ## Future improvement for this project:
 - Adding more algorithms (e.g. DFS, BFS, A*)
 - Making ui package more modular, (e.g. seperate visualisation for graph and table)
+- Highlight the entry in the table that was just updated
