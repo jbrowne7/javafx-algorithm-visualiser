@@ -1,9 +1,6 @@
 package tech.jamesabrowne.visualiser.algorithm;
 
-import tech.jamesabrowne.visualiser.model.Edge;
-import tech.jamesabrowne.visualiser.model.Graph;
-import tech.jamesabrowne.visualiser.model.Node;
-import tech.jamesabrowne.visualiser.model.StepResult;
+import tech.jamesabrowne.visualiser.model.*;
 
 import java.util.*;
 
@@ -26,7 +23,7 @@ public class Dijkstra extends Algorithm {
 
     public Dijkstra(Graph graph, String startNodeId) {
         this.graph = graph;
-        this.queue = new PriorityQueue<>(Comparator.comparingInt(n -> n.distance));
+        this.queue = new PriorityQueue<>(Comparator.comparingInt(n -> n.getDistance()));
         this.distances = new HashMap<>();
         this.visited = new HashSet<>();
 
@@ -42,12 +39,12 @@ public class Dijkstra extends Algorithm {
         while ((edgeIterator == null || !edgeIterator.hasNext()) && !queue.isEmpty()) {
             NodeEntry current = queue.poll();
 
-            if (visited.contains(current.nodeId)) {
+            if (visited.contains(current.getNodeId())) {
                 continue;
             }
 
-            visited.add(current.nodeId);
-            currentNodeId = current.nodeId;
+            visited.add(current.getNodeId());
+            currentNodeId = current.getNodeId();
             currentNode = graph.getNode(currentNodeId);
             edgeIterator = currentNode.getEdgeList().iterator();
         }
@@ -73,16 +70,18 @@ public class Dijkstra extends Algorithm {
         return new StepResult(currentNode.getId(), edge);
     }
 
-    /**
-     * Helper class for node comparison
-     */
-    private static class NodeEntry {
-        String nodeId;
-        int distance;
+    @Override
+    public int getDistance(String nodeId) {
+        return distances.getOrDefault(nodeId, Integer.MAX_VALUE);
+    }
 
-        NodeEntry(String nodeId, int distance) {
-            this.nodeId = nodeId;
-            this.distance = distance;
-        }
+    @Override
+    public boolean isVisited(String nodeId) {
+        return visited.contains(nodeId);
+    }
+
+    @Override
+    public Graph getGraph() {
+        return this.graph;
     }
 }

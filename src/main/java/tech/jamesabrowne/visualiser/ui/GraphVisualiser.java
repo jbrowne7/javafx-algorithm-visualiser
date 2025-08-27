@@ -1,10 +1,14 @@
 package tech.jamesabrowne.visualiser.ui;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -14,11 +18,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;
-import tech.jamesabrowne.visualiser.controller.Controller;
-import tech.jamesabrowne.visualiser.model.Edge;
-import tech.jamesabrowne.visualiser.model.Graph;
-import tech.jamesabrowne.visualiser.model.Node;
-import tech.jamesabrowne.visualiser.model.StepResult;
+import tech.jamesabrowne.visualiser.algorithm.Dijkstra;
+import tech.jamesabrowne.visualiser.model.*;
 import tech.jamesabrowne.visualiser.util.AlgorithmFactory;
 import tech.jamesabrowne.visualiser.util.GraphBuilder;
 
@@ -49,7 +50,6 @@ public class GraphVisualiser extends Application {
         Group root = new Group();
         String algorithmName = params.getRaw().getFirst();
         Algorithm algorithm = AlgorithmFactory.getAlgorithm(algorithmName, graph, "N2");
-        Controller controller = new Controller(algorithm);
 
         int nodeCount = graph.getAllNodes().size();
         int columns = (int) Math.ceil(Math.sqrt(nodeCount));
@@ -58,6 +58,7 @@ public class GraphVisualiser extends Application {
 
         double cellWidth = WIDTH / (columns * 1.5);
         double cellHeight = HEIGHT / (rows * 1.5);
+
 
         /*
             Drawing nodes, places node in a grid based on the size of the scene
@@ -185,11 +186,34 @@ public class GraphVisualiser extends Application {
             }
         }
 
+
+//        TableView<NodeEntry> tableView = new TableView<>();
+//
+//        TableColumn<NodeEntry, String> nodeCol = new TableColumn<>("Node");
+//        nodeCol.setCellValueFactory(data -> data.getValue().getNodeId());
+//
+//        TableColumn<NodeEntry, Number> distCol = new TableColumn<>("Distance");
+//        distCol.setCellValueFactory(data -> data.getValue().getDistance());
+//
+//        tableView.getColumns().addAll(nodeCol, distCol);
+//        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+//
+//        ObservableList<AlgorithmTableRow> tableData = FXCollections.observableArrayList();
+//
+//        for (Node node : graph.getAllNodes()) {
+//            int dist = algorithm.getDistance(node.getId()); // likely Integer.MAX_VALUE at start
+//            boolean visited = algorithm.isVisited(node.getId());
+//            tableData.add(new AlgorithmTableRow(node.getId(), dist, visited));
+//        }
+//
+//        tableView.setItems(tableData);
+
+
         Button stepButton = new Button("Step");
         stepButton.setLayoutX(20);
         stepButton.setLayoutY(20);
         stepButton.setOnAction(e -> {
-            StepResult result = controller.step();
+            StepResult result = algorithm.step();
             if (result == null) {
                 System.out.println("finished");
                 return;
@@ -220,12 +244,26 @@ public class GraphVisualiser extends Application {
                 lastHighlightedArrowHead = arrowHead;
             }
 
+//            updateTable(algorithm, tableView);
+
             System.out.println(result.getCurrentNodeId());
         });
         root.getChildren().add(stepButton);
+
 
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
         stage.show();
     }
+
+    private void updateTable(Algorithm algorithm, TableView<NodeEntry> table) {
+        List<NodeEntry> entries = new ArrayList<>();
+        for (Node node : algorithm.getGraph().getAllNodes()) {
+            String nodeId = node.getId();
+            int distance = algorithm.getDistance(nodeId);
+            entries.add(new NodeEntry(nodeId, distance));
+        }
+        table.getItems().setAll(entries);
+    }
+
 }
