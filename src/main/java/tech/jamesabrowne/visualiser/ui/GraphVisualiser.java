@@ -1,7 +1,10 @@
 package tech.jamesabrowne.visualiser.ui;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -187,26 +190,30 @@ public class GraphVisualiser extends Application {
         }
 
 
-//        TableView<NodeEntry> tableView = new TableView<>();
-//
-//        TableColumn<NodeEntry, String> nodeCol = new TableColumn<>("Node");
-//        nodeCol.setCellValueFactory(data -> data.getValue().getNodeId());
-//
-//        TableColumn<NodeEntry, Number> distCol = new TableColumn<>("Distance");
-//        distCol.setCellValueFactory(data -> data.getValue().getDistance());
-//
-//        tableView.getColumns().addAll(nodeCol, distCol);
-//        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-//
-//        ObservableList<AlgorithmTableRow> tableData = FXCollections.observableArrayList();
-//
-//        for (Node node : graph.getAllNodes()) {
-//            int dist = algorithm.getDistance(node.getId()); // likely Integer.MAX_VALUE at start
-//            boolean visited = algorithm.isVisited(node.getId());
-//            tableData.add(new AlgorithmTableRow(node.getId(), dist, visited));
-//        }
-//
-//        tableView.setItems(tableData);
+        TableView<AlgorithmTableRow> tableView = new TableView<>();
+        tableView.setLayoutX(WIDTH - 250);
+        tableView.setLayoutY(20);
+
+        TableColumn<AlgorithmTableRow, String> nodeCol = new TableColumn<>("Node");
+        nodeCol.setCellValueFactory(
+                data -> new SimpleStringProperty(data.getValue().getNodeId())
+        );
+
+        TableColumn<AlgorithmTableRow, Number> distCol = new TableColumn<>("Distance");
+        distCol.setCellValueFactory(
+                data -> new SimpleIntegerProperty(data.getValue().getDistance())
+        );
+
+        tableView.getColumns().addAll(nodeCol, distCol);
+        ObservableList<AlgorithmTableRow> tableData = FXCollections.observableArrayList();
+
+        for (Node node : graph.getAllNodes()) {
+            int dist = algorithm.getDistance(node.getId());
+            tableData.add(new AlgorithmTableRow(node.getId(), dist));
+        }
+
+        tableView.setItems(tableData);
+        root.getChildren().add(tableView);
 
 
         Button stepButton = new Button("Step");
