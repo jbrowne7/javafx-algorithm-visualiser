@@ -12,9 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;
 import tech.jamesabrowne.visualiser.model.Node;
-import tech.jamesabrowne.visualiser.model.StepResult;
-
-
 
 public class DistancesPane extends javafx.scene.layout.Pane {
     private final TableView<Row> table = new TableView<>();

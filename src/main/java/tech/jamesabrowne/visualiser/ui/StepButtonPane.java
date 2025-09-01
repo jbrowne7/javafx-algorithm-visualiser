@@ -4,7 +4,6 @@ import javafx.scene.control.Button;
 import tech.jamesabrowne.visualiser.model.StepResult;
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;;
 
-
 public class StepButtonPane extends javafx.scene.layout.Pane {
     private Algorithm algorithm;
     private GraphPane graphPane;

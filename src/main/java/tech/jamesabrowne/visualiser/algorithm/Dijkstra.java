@@ -18,9 +18,6 @@ public class Dijkstra extends Algorithm {
     private Iterator<Edge> edgeIterator = null;
     private String currentNodeId = null;
 
-
-    private String lastProcessedNode;
-
     @Override
     public void initialise(Graph graph, String startNodeId) {
         this.graph = graph;

@@ -13,10 +13,6 @@ import tech.jamesabrowne.visualiser.util.GraphBuilder;
  */
 public class GraphVisualiser extends Application {
 
-    private static final int WIDTH = 1300;
-    private static final int HEIGHT = 900;
-    private static final int NODE_RADIUS = 17;
-
     @Override
     public void start(Stage stage) {
         Parameters params = getParameters();
