@@ -5,11 +5,8 @@ import tech.jamesabrowne.visualiser.model.StepResult;
 
 public class DFS extends Algorithm {
 
-    public DFS(Graph graph, String startNodeId) {
-    }
-
     @Override
-    public void initialise() {
+    public void initialise(Graph graph, String startNodeId) {
 
     }
 

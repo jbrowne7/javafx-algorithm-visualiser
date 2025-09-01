@@ -9,10 +9,10 @@ import java.util.*;
  */
 public class Dijkstra extends Algorithm {
 
-    private final Graph graph;
-    private final PriorityQueue<NodeEntry> queue;
-    private final Map<String, Integer> distances;
-    private final Set<String> visited;
+    private Graph graph;
+    private PriorityQueue<NodeEntry> queue;
+    private Map<String, Integer> distances;
+    private Set<String> visited;
 
     private Node currentNode = null;
     private Iterator<Edge> edgeIterator = null;
@@ -21,7 +21,8 @@ public class Dijkstra extends Algorithm {
 
     private String lastProcessedNode;
 
-    public Dijkstra(Graph graph, String startNodeId) {
+    @Override
+    public void initialise(Graph graph, String startNodeId) {
         this.graph = graph;
         this.queue = new PriorityQueue<>(Comparator.comparingInt(n -> n.getDistance()));
         this.distances = new HashMap<>();
@@ -32,11 +33,6 @@ public class Dijkstra extends Algorithm {
         }
         distances.put(startNodeId, 0);
         queue.add(new NodeEntry(startNodeId, 0));
-    }
-
-    @Override
-    public void initialise() {
-
     }
 
     @Override

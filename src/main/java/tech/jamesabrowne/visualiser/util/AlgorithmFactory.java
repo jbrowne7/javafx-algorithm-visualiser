@@ -8,13 +8,18 @@ import tech.jamesabrowne.visualiser.model.Graph;
 public class AlgorithmFactory {
 
     public static Algorithm getAlgorithm(String name, Graph graph, String startNodeId) {
+        Algorithm algorithm;
         switch (name) {
             case "dijkstra":
-                return new Dijkstra(graph, startNodeId);
+                algorithm = new Dijkstra();
+                break;
             case "dfs":
-                return new DFS(graph, startNodeId);
+                algorithm = new DFS();
+                break;
             default:
                 throw new IllegalArgumentException("Unkown algorithm: " + name);
         }
+        algorithm.initialise(graph, startNodeId);
+        return algorithm;
     }
 }
