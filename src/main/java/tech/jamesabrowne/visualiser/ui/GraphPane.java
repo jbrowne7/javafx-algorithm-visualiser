@@ -14,20 +14,27 @@ import javafx.scene.text.Text;
 import tech.jamesabrowne.visualiser.model.Edge;
 import tech.jamesabrowne.visualiser.model.Graph;
 import tech.jamesabrowne.visualiser.model.Node;
+import tech.jamesabrowne.visualiser.model.StepResult;
+
 
 /**
  * Used for rendering the graph and its elements (nodes, edges, weights)
  */
 public class GraphPane extends javafx.scene.layout.Pane {
 
-    private Graph graph;
     private int nodeRadius;
     private int paneWidth;
     private int paneHeight;
+
     private final Map<String, Double[]> nodePositions = new HashMap<>();
     private final Map<String, Circle> nodeCircles = new HashMap<>();
     private final Map<String, Map<String, Line>> edgeLines = new HashMap<>();
     private final Map<String, Map<String, Polygon>> edgeArrowHeads = new HashMap<>();
+
+    private Graph graph;
+    private Circle lastHighlightedNode = null;
+    private Line lastHighlightedEdge = null;
+    private Polygon lastHighlightedArrowHead = null;
 
     public void setGraph(Graph graph) {
         this.graph = graph;
@@ -168,6 +175,33 @@ public class GraphPane extends javafx.scene.layout.Pane {
                 weightLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
                 getChildren().add(weightLabel);
             }
+        }
+    }
+
+    public void applyStep(StepResult result) {
+        if (lastHighlightedNode != null) lastHighlightedNode.setFill(Color.WHITE);
+        if (lastHighlightedEdge != null) lastHighlightedEdge.setStroke(Color.BLACK);
+        if (lastHighlightedArrowHead != null) lastHighlightedArrowHead.setFill(Color.BLACK);
+
+        Circle currentCircle = nodeCircles.get(result.getCurrentNodeId());
+        if (currentCircle != null) {
+            currentCircle.setFill(Color.YELLOW);
+            lastHighlightedNode = currentCircle;
+        }
+
+        String[] currentEdge = {result.getCurrentEdge().getFrom().getId(), result.getCurrentEdge().getTo().getId()};
+        Line edgeLine = edgeLines.getOrDefault(currentEdge[0], Map.of()).get(currentEdge[1]);
+        if (edgeLine != null) {
+            edgeLine.setStroke(Color.RED);
+            edgeLine.toFront();
+            lastHighlightedEdge = edgeLine;
+        }
+
+        Polygon arrowHead = edgeArrowHeads.getOrDefault(currentEdge[0], Map.of()).get(currentEdge[1]);
+        if (arrowHead != null) {
+            arrowHead.setFill(Color.RED);
+            arrowHead.toFront();
+            lastHighlightedArrowHead = arrowHead;
         }
     }
 

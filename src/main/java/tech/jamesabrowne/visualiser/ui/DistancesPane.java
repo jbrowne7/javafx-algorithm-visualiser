@@ -3,11 +3,17 @@ package tech.jamesabrowne.visualiser.ui;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;
 import tech.jamesabrowne.visualiser.model.Node;
+import tech.jamesabrowne.visualiser.model.StepResult;
+
 
 
 public class DistancesPane extends javafx.scene.layout.Pane {
@@ -48,6 +54,16 @@ public class DistancesPane extends javafx.scene.layout.Pane {
     public void setLayout(int tableWidth, int tableHeight) {
         this.tableWidth = tableWidth;
         this.tableHeight = tableHeight;
+    }
+
+    public void refreshDistances() {
+        List<Row> entries = new ArrayList<>();
+        for (Node node : algorithm.getGraph().getAllNodes()) {
+            String nodeId = node.getId();
+            int distance = algorithm.getDistance(nodeId);
+            entries.add(new Row(nodeId, distance));
+        }
+        table.getItems().setAll(entries);
     }
 
     public static class Row {
