@@ -6,7 +6,9 @@ import javafx.stage.Stage;
 import tech.jamesabrowne.visualiser.algorithm.Algorithm;
 import tech.jamesabrowne.visualiser.model.*;
 import tech.jamesabrowne.visualiser.util.AlgorithmFactory;
+import tech.jamesabrowne.visualiser.util.AppContext;
 import tech.jamesabrowne.visualiser.util.GraphBuilder;
+import tech.jamesabrowne.visualiser.util.AppConfig;
 
 /**
  * This class is used to place UI panes for graphs
@@ -15,9 +17,9 @@ public class GraphVisualiser extends Application {
 
     @Override
     public void start(Stage stage) {
-        Parameters params = getParameters();
+        AppConfig cfg = AppContext.getConfig();
         Graph graph = GraphBuilder.presetBuild(1);
-        String algorithmName = params.getRaw().getFirst();
+        String algorithmName = cfg.algorithm();
         Algorithm algorithm = AlgorithmFactory.getAlgorithm(algorithmName, graph, "N2");
 
         GraphPane graphPane = new GraphPane();
