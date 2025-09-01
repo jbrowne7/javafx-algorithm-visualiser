@@ -1,3 +1,12 @@
+# Relevant skills which I have showcased and improved from this project
+
+- Create innovative solutions: Interactive graph algorithm visualizer (JavaFX), including step-by-step highlighting and distances table.
+
+- Programming/data structures/algorithms
+
+- Problem solving: Turning graph algorithms into UI state transitions
+
+
 # Requirements
 - Java 23
 - Git
