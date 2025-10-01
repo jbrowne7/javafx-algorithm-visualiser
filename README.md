@@ -1,10 +1,6 @@
-# Relevant skills which I have showcased and improved from this project
+# JavaFX Algorithm Visualiser
 
-- Create innovative solutions: Interactive graph algorithm visualizer (JavaFX), including step-by-step highlighting and distances table.
-
-- Programming/data structures/algorithms
-
-- Problem solving: Turning graph algorithms into UI state transitions
+Used JavaFX to create a visual graph which shows the steps of dijkstras algorithm, turns dijkstra into UI state transition
 
 
 # Requirements
