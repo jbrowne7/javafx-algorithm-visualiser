@@ -9,8 +9,8 @@ import java.util.Random;
 
 public class GraphBuilder {
 
-    private static final int MAX_NODES = 10;
-    private static final int MIN_NODES = 4;
+    private static final int MAX_NODES = 20;
+    private static final int MIN_NODES = 10;
     private static final int MAX_EDGES = 2 * MAX_NODES;
     private static final int MAX_WEIGHT = 100;
     private static final int MIN_WEIGHT = 0;

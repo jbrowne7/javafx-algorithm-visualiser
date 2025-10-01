@@ -18,7 +18,7 @@ public class GraphVisualiser extends Application {
     @Override
     public void start(Stage stage) {
         AppConfig cfg = AppContext.getConfig();
-        Graph graph = GraphBuilder.presetBuild(1);
+        Graph graph = GraphBuilder.randomBuild();
         String algorithmName = cfg.algorithm();
         Algorithm algorithm = AlgorithmFactory.getAlgorithm(algorithmName, graph, "N2");
 
