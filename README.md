@@ -2,19 +2,21 @@
 
 Used JavaFX to create a visual graph which shows the steps of dijkstras algorithm, turns dijkstra into UI state transition
 
+## Table of Contents
+
+- [Video Demo](#video-demo)
+- [Requirements](#requirements)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Future Improvements](#future-improvements)
+
 ## Video Demo
 
 [![Algorithm Visualiser Demo](https://img.youtube.com/vi/5Gv4n_MWxY8/0.jpg)](https://jamesbrowne.dev/posts/javafx-algorithm-visualiser/#demo-video)
 
 Click the image above to watch a demonstration of the algorithm visualiser.
 
-## Table of Contents
-
-- [Requirements](#requirements)
-- [Setup](#setup)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Future Improvements](#future-improvements)
 
 ## Requirements
 - Java 17-21
@@ -80,6 +82,6 @@ This package contains utility classes and methods used throughout the project. C
 - AppContext (stored configuration settings as AppConfig)
 - ArgsParser (parses cmdline arguments)
 
-## Future improvement for this project:
+## Future Improvements:
 - Adding more algorithms (e.g. DFS, BFS)
 - Highlight the entry in the table that was just updated
