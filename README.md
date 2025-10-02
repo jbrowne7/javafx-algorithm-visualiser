@@ -4,7 +4,7 @@ Used JavaFX to create a visual graph which shows the steps of dijkstras algorith
 
 ## Video Demo
 
-[![Algorithm Visualiser Demo](https://img.youtube.com/vi/5Gv4n_MWxY8/0.jpg)](https://youtu.be/5Gv4n_MWxY8)
+[![Algorithm Visualiser Demo](https://img.youtube.com/vi/5Gv4n_MWxY8/0.jpg)](https://jamesbrowne.dev/posts/javafx-algorithm-visualiser/#demo-video)
 
 Click the image above to watch a demonstration of the algorithm visualiser.
 
